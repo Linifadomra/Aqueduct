@@ -32,6 +32,12 @@
 *.out
 *.app
 
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+*.so.*
+
 # Build directories
 build/
 Build/
