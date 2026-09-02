@@ -4,6 +4,9 @@ on:
     tags: ["librclone-v*"]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 env:
   RCLONE_VERSION: "v1.68.2"
 

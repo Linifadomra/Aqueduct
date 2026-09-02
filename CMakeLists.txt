@@ -5,14 +5,36 @@ project(aqueduct VERSION 0.1.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_C_STANDARD 11)
 
+set(AQUEDUCT_LIBRCLONE_REPO "Linifadomra/Aqueduct")
+set(AQUEDUCT_LIBRCLONE_TAG  "librclone-v1.68.2")
+set(AQUEDUCT_RELEASE_BASE
+    "https://github.com/${AQUEDUCT_LIBRCLONE_REPO}/releases/download/${AQUEDUCT_LIBRCLONE_TAG}")
 if(WIN32)
-    set(RCLONE_VENDOR_BIN "${CMAKE_SOURCE_DIR}/vendor/windows/librclone.dll")
+    set(RCLONE_VENDOR_BIN      "${CMAKE_SOURCE_DIR}/vendor/windows/librclone.dll")
     set(RCLONE_VENDOR_BIN_NAME "librclone.dll")
+    set(RCLONE_VENDOR_URL      "${AQUEDUCT_RELEASE_BASE}/librclone.dll")
+    set(RCLONE_VENDOR_SHA256   "PUT_WINDOWS_SHA256_HERE")
 elseif(UNIX)
-    set(RCLONE_VENDOR_BIN "${CMAKE_SOURCE_DIR}/vendor/linux/librclone.so")
+    set(RCLONE_VENDOR_BIN      "${CMAKE_SOURCE_DIR}/vendor/linux/librclone.so")
     set(RCLONE_VENDOR_BIN_NAME "librclone.so")
+    set(RCLONE_VENDOR_URL      "${AQUEDUCT_RELEASE_BASE}/librclone.so")
+    set(RCLONE_VENDOR_SHA256   "PUT_LINUX_SHA256_HERE")
 else()
     message(FATAL_ERROR "librclone: unsupported platform")
+endif()
+
+if(NOT EXISTS "${RCLONE_VENDOR_BIN}")
+    message(STATUS "librclone: downloading ${RCLONE_VENDOR_BIN_NAME} from ${RCLONE_VENDOR_URL}")
+    file(DOWNLOAD "${RCLONE_VENDOR_URL}" "${RCLONE_VENDOR_BIN}"
+        EXPECTED_HASH SHA256=${RCLONE_VENDOR_SHA256}
+        SHOW_PROGRESS
+        STATUS RCLONE_DOWNLOAD_STATUS)
+    list(GET RCLONE_DOWNLOAD_STATUS 0 RCLONE_DOWNLOAD_CODE)
+    if(NOT RCLONE_DOWNLOAD_CODE EQUAL 0)
+        list(GET RCLONE_DOWNLOAD_STATUS 1 RCLONE_DOWNLOAD_MSG)
+        file(REMOVE "${RCLONE_VENDOR_BIN}") # don't leave a partial/corrupt file behind
+        message(FATAL_ERROR "librclone: download failed: ${RCLONE_DOWNLOAD_MSG}")
+    endif()
 endif()
 
 if(NOT EXISTS "${RCLONE_VENDOR_BIN}")
