@@ -1,0 +1,16 @@
+{
+  "clangd.arguments": [
+    "--background-index",
+    "--clang-tidy",
+    "--header-insertion=iwyu",
+    "--completion-style=detailed",
+    "--function-arg-placeholders",
+    "--fallback-style=llvm",
+    "--compile-commands-dir=${workspaceFolder}/build"
+  ],
+  "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
+  "[cpp]": {
+    "files.encoding": "utf8",
+    "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+  },  "git.ignoreLimitWarning": true
+}
